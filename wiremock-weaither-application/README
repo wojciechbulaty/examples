@@ -1,0 +1,2 @@
+This applicaiton can be used as a demonstration of how to use both inprocess (JUnit) and standalone Wiremock.
+If you wish do deomnstrate standalone Wiremock usage for a record and replay scenario, you can change the URL from the real forecast.io URL to standalone Wiremock in weather-application.properties
