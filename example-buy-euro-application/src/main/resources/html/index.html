@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Buy EUR Application</title>
+    <link href="bootstrap-3.3.6-dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/navbar.css" rel="stylesheet">
+</head>
+<style>
+    span.warning {
+        color: red;
+        font-weight: bold;
+        display: none;
+    }
+</style>
+<body>
+
+<div class="container">
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">Weather app</a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="#">Home</a></li>
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="jumbotron">
+        <h1>Should you buy EUR?</h1>
+
+        <p>The current value GBP to EUR is <span id="gbp-to-eur">(please wait...)</span><span id="buy" class="warning"> BUY !!!</span></p>
+    </div>
+</div>
+
+<script>window.jQuery || document.write('<script src="assets/js/vendor/jquery-1.11.3.min.js"><\/script>')</script>
+<script src="bootstrap-3.3.6-dist/js/bootstrap.min.js"></script>
+<script src="assets/js/ie10-viewport-bug-workaround.js"></script>
+<script>
+    $().ready(new function () {
+        $.ajax({
+            url: "/gbp-to-eur",
+            success: function (resultJson) {
+                var result = JSON.parse(resultJson);
+                $("#gbp-to-eur").html(result['gbpToEur']);
+                var warning = result['buy'];
+                $("#buy").css("display", warning ? "inline" : "none");
+                $("#gbp-to-eur").css("color", warning ? "red" : "green");
+            }
+        });
+    })
+</script>
+</body>
+</html>
