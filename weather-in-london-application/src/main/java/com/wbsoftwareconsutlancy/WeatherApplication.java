@@ -21,7 +21,7 @@ public class WeatherApplication {
         weatherApplication.join();
     }
 
-    public void start()  {
+    public void start() {
         info("Starting weather application...");
         server = new Server(port);
         HandlerList handlers = new HandlerList();
@@ -57,17 +57,12 @@ public class WeatherApplication {
     }
 
     private static InputStream getPropertiesInputStream() throws FileNotFoundException {
-        String fileLocation = System.getProperty("weather.application.properties");
-        if (fileLocation != null) {
-            return new FileInputStream(new File(fileLocation));
+        String classpathFileName = "weather-application.properties";
+        InputStream resourceAsStream = WeatherApplication.class.getClassLoader().getResourceAsStream(classpathFileName);
+        if (resourceAsStream != null) {
+            return resourceAsStream;
         } else {
-            String classpathFileName = "weather-application.properties";
-            InputStream resourceAsStream = WeatherApplication.class.getClassLoader().getResourceAsStream(classpathFileName);
-            if (resourceAsStream != null) {
-                return resourceAsStream;
-            } else {
-                throw new FileNotFoundException("property file '" + classpathFileName + "' not found in the classpath");
-            }
+            throw new FileNotFoundException("property file '" + classpathFileName + "' not found in the classpath");
         }
     }
 
