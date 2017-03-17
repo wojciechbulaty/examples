@@ -34,7 +34,7 @@ public class WeatherApplication {
         } catch (Exception e) {
             throw new WebServerStartupException(e);
         }
-        info("Started!");
+        info("Started on http://localhost:" + port);
     }
 
     private static void info(String msg) {
