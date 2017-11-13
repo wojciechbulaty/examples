@@ -66,12 +66,17 @@ public class UnitConverterApplication {
     }
 
     private static InputStream getPropertiesInputStream() throws FileNotFoundException {
-        String classpathFileName = "unit-converter-application.properties";
-        InputStream resourceAsStream = UnitConverterApplication.class.getClassLoader().getResourceAsStream(classpathFileName);
-        if (resourceAsStream != null) {
-            return resourceAsStream;
+        String fileLocation = System.getProperty("unit-converter-application.properties");
+        if (fileLocation != null) {
+            return new FileInputStream(new File(fileLocation));
         } else {
-            throw new FileNotFoundException("property file '" + classpathFileName + "' not found in the classpath");
+            String classpathFileName = "unit-converter-application.properties";
+            InputStream resourceAsStream = UnitConverterApplication.class.getClassLoader().getResourceAsStream(classpathFileName);
+            if (resourceAsStream != null) {
+                return resourceAsStream;
+            } else {
+                throw new FileNotFoundException("property file '" + classpathFileName + "' not found in the classpath");
+            }
         }
     }
 
