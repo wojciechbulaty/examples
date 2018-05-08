@@ -3,6 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/grpc-shop.iml" filepath="$PROJECT_DIR$/grpc-shop.iml" />
+      <module fileurl="file://$PROJECT_DIR$/shop-backend/shop-backend.iml" filepath="$PROJECT_DIR$/shop-backend/shop-backend.iml" />
+      <module fileurl="file://$PROJECT_DIR$/shop-frontend/shop-frontend.iml" filepath="$PROJECT_DIR$/shop-frontend/shop-frontend.iml" />
     </modules>
   </component>
 </project>
