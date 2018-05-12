@@ -24,14 +24,11 @@ public class ShopBackendServer {
                 .build()
                 .start();
         System.out.println("Server started on localhost:" + port);
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-                System.out.println("Shutting down gRPC server since JVM is shutting down");
-                server.shutdown();
-                System.out.println("Server shut down!");
-            }
-        });
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            System.out.println("Shutting down gRPC server");
+            server.shutdown();
+            System.out.println("Server shut down!");
+        }));
         server.awaitTermination();
     }
 
