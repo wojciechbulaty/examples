@@ -11,9 +11,9 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="grpc-shop" target="1.5" />
-      <module name="shop-backend" target="1.5" />
-      <module name="shop-frontend" target="1.5" />
+      <module name="grpc-shop" target="1.8" />
+      <module name="shop-backend" target="1.8" />
+      <module name="shop-frontend" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>
