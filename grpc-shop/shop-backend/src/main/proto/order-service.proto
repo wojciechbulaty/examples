@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+//option java_outer_classname = "OrderProto";
+option java_package = "com.trafficparrot.examples.shop.proto";
+
+package com.trafficparrot.ordering;
+
+message Item {
+    int32 sku = 1;
+    int32 quantity = 2;
+}
+
+enum Status {
+    SUCCESS = 0;
+    ERROR = 1;
+}
+
+message OrderStatus {
+    Status status = 1;
+    string message = 2;
+}
+
+service Order {
+    rpc Purchase(Item) returns (OrderStatus) {}
+}
