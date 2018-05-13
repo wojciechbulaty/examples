@@ -3,10 +3,13 @@ package com.trafficparrot.examples.shop;
 import com.trafficparrot.examples.shop.proto.Item;
 import com.trafficparrot.examples.shop.proto.OrderGrpc;
 import com.trafficparrot.examples.shop.proto.OrderStatus;
+import com.trafficparrot.examples.shop.util.Logger;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 
 import java.util.concurrent.TimeUnit;
+
+import static com.trafficparrot.examples.shop.util.Logger.info;
 
 public class ShopFrontendClient {
     private final ManagedChannel channel;
@@ -28,7 +31,7 @@ public class ShopFrontendClient {
     public void order(int sku, int quantity) {
         Item item = Item.newBuilder().setSku(sku).setQuantity(quantity).build();
         OrderStatus orderStatus = blockingStub.purchase(item);
-        System.out.println("orderStatus = " + orderStatus);
+        info("Received " + orderStatus);
     }
 
     public static void main(String[] args) throws InterruptedException {
