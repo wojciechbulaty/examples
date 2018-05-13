@@ -4,7 +4,6 @@ import com.trafficparrot.examples.shop.proto.Item;
 import com.trafficparrot.examples.shop.proto.OrderGrpc;
 import com.trafficparrot.examples.shop.proto.OrderStatus;
 import com.trafficparrot.examples.shop.proto.Status;
-import com.trafficparrot.examples.shop.util.Logger;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
