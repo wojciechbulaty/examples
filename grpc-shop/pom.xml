@@ -8,13 +8,6 @@
     <artifactId>grpcshop</artifactId>
     <version>1.0-SNAPSHOT</version>
 
-    <packaging>pom</packaging>
-
-    <modules>
-        <module>shop-backend</module>
-        <module>shop-frontend</module>
-    </modules>
-
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <grpc.version>1.11.0</grpc.version>
