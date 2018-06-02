@@ -3,15 +3,20 @@ package com.trafficparrot.examples.shop;
 import com.trafficparrot.examples.shop.proto.Item;
 import com.trafficparrot.examples.shop.proto.OrderGrpc;
 import com.trafficparrot.examples.shop.proto.OrderStatus;
-import com.trafficparrot.examples.shop.util.Logger;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 
+import javax.swing.*;
+import java.awt.*;
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import static com.trafficparrot.examples.shop.util.Logger.info;
+import static java.awt.BorderLayout.*;
+import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
 public class ShopFrontendClient {
+    private static final String NEW_LINE = System.getProperty("line.separator");
     private final ManagedChannel channel;
     private final OrderGrpc.OrderBlockingStub blockingStub;
 
@@ -34,12 +39,62 @@ public class ShopFrontendClient {
         info("Received " + orderStatus);
     }
 
-    public static void main(String[] args) throws InterruptedException {
-        ShopFrontendClient client = new ShopFrontendClient("localhost", ShopBackendServer.PORT);
-        try {
-            client.order(43423232, 444);
-        } finally {
-            client.shutdown();
-        }
+    public static void main(String[] args) throws InterruptedException, IOException {
+        runUi();
+    }
+
+    private static void runUi() {
+        JFrame frame = new JFrame("Shopping Application");
+        frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        Container container = frame.getContentPane();
+
+        JPanel serverDetails = new JPanel();
+        serverDetails.add(new JLabel("Server host"));
+        JTextField host = new JTextField("localhost", 15);
+        serverDetails.add(host);
+        serverDetails.add(new JLabel("Server port"));
+        JTextField port = new JTextField("12345", 6);
+        serverDetails.add(port);
+        container.add(serverDetails, PAGE_START);
+
+        JPanel outputPanel = new JPanel();
+        JTextArea output = new JTextArea("", 20, 40);
+        outputPanel.add(output);
+        container.add(outputPanel, PAGE_END);
+
+        JPanel orderDetails = new JPanel();
+        orderDetails.add(new JLabel("Item ID"));
+        JTextField sku = new JTextField("1", 10);
+        orderDetails.add(sku);
+        orderDetails.add(new JLabel("Quantity"));
+        JTextField quantity = new JTextField("1", 3);
+        orderDetails.add(quantity);
+        JButton order = new JButton("Order");
+        order.addActionListener(event -> {
+            try {
+                ShopFrontendClient client = new ShopFrontendClient(host.getText(), Integer.parseInt(port.getText()));
+                int skuInt = Integer.parseInt(sku.getText());
+                int quantityInt = Integer.parseInt(quantity.getText());
+                try {
+                    client.order(skuInt, quantityInt);
+                    output.append("Ordered " + quantityInt + " of " + skuInt + NEW_LINE);
+                } finally {
+                    try {
+                        client.shutdown();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        output.append("ERROR! " + e.getMessage() + NEW_LINE);
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                output.append("ERROR! " + e.getMessage() + NEW_LINE);
+            }
+        });
+        orderDetails.add(order);
+        container.add(orderDetails, CENTER);
+
+        frame.pack();
+        frame.setVisible(true);
     }
 }
