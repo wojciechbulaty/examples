@@ -8,39 +8,113 @@ import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
 
+import javax.swing.*;
+import java.awt.*;
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicReference;
 
+import static com.sun.xml.internal.ws.policy.privateutil.PolicyUtils.Text.NEW_LINE;
 import static com.trafficparrot.examples.shop.util.Logger.info;
+import static java.awt.BorderLayout.CENTER;
+import static java.awt.BorderLayout.PAGE_END;
+import static java.awt.BorderLayout.PAGE_START;
+import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
 public class ShopBackendServer {
-    public static final int PORT = 12345;
     private Server server;
 
-    private void start() throws IOException, InterruptedException {
-        server = ServerBuilder.forPort(PORT)
-                .addService(new OrderService())
+    private void start(int port, OrderService.OrderLogger logger) throws IOException, InterruptedException {
+        server = ServerBuilder.forPort(port)
+                .addService(new OrderService(logger))
                 .build()
                 .start();
-        info("Server started on localhost:" + PORT);
+        info("Server started on localhost:" + port);
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             System.out.println("Shutting down gRPC server");
             server.shutdown();
             System.out.println("Server shut down!");
         }));
+    }
+
+    private void stop() throws InterruptedException {
+        server.shutdown();
         server.awaitTermination();
     }
 
     public static void main(String[] args) throws IOException, InterruptedException {
-        ShopBackendServer server = new ShopBackendServer();
-        server.start();
+        runUi();
+    }
+
+    private static void runUi() {
+        JFrame frame = new JFrame("Shop Server");
+        frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        Container container = frame.getContentPane();
+
+        JPanel serverDetails = new JPanel();
+        serverDetails.add(new JLabel("Server port"));
+        JTextField port = new JTextField("12345", 6);
+        serverDetails.add(port);
+        container.add(serverDetails, PAGE_START);
+
+        JPanel outputPanel = new JPanel();
+        JTextArea output = new JTextArea("", 20, 40);
+        outputPanel.add(output);
+        container.add(outputPanel, PAGE_END);
+
+        JPanel startStop = new JPanel();
+        JButton stop = new JButton("Stop");
+        stop.setEnabled(false);
+        JButton start = new JButton("Start");
+        AtomicReference<ShopBackendServer> server = new AtomicReference<>();
+        start.addActionListener(event -> {
+            try {
+                server.set(new ShopBackendServer());
+                int portInt = Integer.parseInt(port.getText());
+                server.get().start(portInt, message -> output.append(message + NEW_LINE));
+                start.setEnabled(false);
+                stop.setEnabled(true);
+                output.append("Started server on host localhost and port " + portInt + NEW_LINE);
+            } catch (Exception e) {
+                e.printStackTrace();
+                output.append("ERROR! " + e.getMessage() + NEW_LINE);
+            }
+        });
+        startStop.add(start);
+        container.add(startStop, CENTER);
+        stop.addActionListener(event -> {
+            try {
+                server.get().stop();
+                start.setEnabled(true);
+                stop.setEnabled(false);
+                output.append("Stopped." + NEW_LINE);
+            } catch (Exception e) {
+                e.printStackTrace();
+                output.append("ERROR! " + e.getMessage() + NEW_LINE);
+            }
+        });
+        startStop.add(stop);
+        container.add(startStop, CENTER);
+
+        frame.pack();
+        frame.setVisible(true);
     }
 
     private static class OrderService extends OrderGrpc.OrderImplBase {
+        private final OrderLogger logger;
+
+        public OrderService(OrderLogger logger) {
+            this.logger = logger;
+        }
+
         @Override
         public void purchase(Item request, StreamObserver<OrderStatus> responseObserver) {
-            info("Request to purchase received for: \n" + request);
+            logger.info("Request to purchase received for: \n" + request);
             responseObserver.onNext(OrderStatus.newBuilder().setStatus(Status.SUCCESS).setMessage("Order processed: " + request).build());
             responseObserver.onCompleted();
+        }
+
+        interface OrderLogger {
+            void info(String message);
         }
     }
 }
