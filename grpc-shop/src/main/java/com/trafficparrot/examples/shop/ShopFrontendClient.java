@@ -11,6 +11,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import static com.sun.xml.internal.ws.policy.privateutil.PolicyUtils.Text.NEW_LINE;
 import static com.trafficparrot.examples.shop.util.Logger.info;
 import static java.awt.BorderLayout.*;
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
@@ -33,10 +34,10 @@ public class ShopFrontendClient {
         channel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
     }
 
-    public void order(int sku, int quantity) {
+    public void order(int sku, int quantity, ShopApplicationLogger shopApplicationLogger) {
         Item item = Item.newBuilder().setSku(sku).setQuantity(quantity).build();
         OrderStatus orderStatus = blockingStub.purchase(item);
-        info("Received " + orderStatus);
+        shopApplicationLogger.info("Received " + orderStatus);
     }
 
     public static void main(String[] args) throws InterruptedException, IOException {
@@ -76,7 +77,7 @@ public class ShopFrontendClient {
                 int skuInt = Integer.parseInt(sku.getText());
                 int quantityInt = Integer.parseInt(quantity.getText());
                 try {
-                    client.order(skuInt, quantityInt);
+                    client.order(skuInt, quantityInt, message -> output.append(message + NEW_LINE));
                     output.append("Ordered " + quantityInt + " of " + skuInt + NEW_LINE);
                 } finally {
                     try {
@@ -96,5 +97,9 @@ public class ShopFrontendClient {
 
         frame.pack();
         frame.setVisible(true);
+    }
+
+    interface ShopApplicationLogger {
+        void info(String message);
     }
 }
