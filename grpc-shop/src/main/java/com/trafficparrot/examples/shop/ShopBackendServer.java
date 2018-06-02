@@ -13,14 +13,13 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static com.sun.xml.internal.ws.policy.privateutil.PolicyUtils.Text.NEW_LINE;
 import static com.trafficparrot.examples.shop.util.Logger.info;
-import static java.awt.BorderLayout.CENTER;
-import static java.awt.BorderLayout.PAGE_END;
-import static java.awt.BorderLayout.PAGE_START;
+import static java.awt.BorderLayout.*;
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
 public class ShopBackendServer {
+    private static final String NEW_LINE = System.getProperty("line.separator");
+
     private Server server;
 
     private void start(int port, OrderService.OrderLogger logger) throws IOException, InterruptedException {

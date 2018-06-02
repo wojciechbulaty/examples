@@ -11,8 +11,6 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-import static com.sun.xml.internal.ws.policy.privateutil.PolicyUtils.Text.NEW_LINE;
-import static com.trafficparrot.examples.shop.util.Logger.info;
 import static java.awt.BorderLayout.*;
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
