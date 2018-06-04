@@ -1,1 +1,1 @@
-java -classpath *.jar com.trafficparrot.examples.shop.ShopFrontendClient
+java -classpath * com.trafficparrot.examples.shop.ShopFrontendClient
