@@ -1,0 +1,1 @@
+START /MIN java -classpath * com.trafficparrot.UvIndexApplication
