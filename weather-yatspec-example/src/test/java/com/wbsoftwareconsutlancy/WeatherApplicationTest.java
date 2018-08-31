@@ -2,10 +2,7 @@ package com.wbsoftwareconsutlancy;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.google.common.collect.ImmutableSet;
-import com.googlecode.yatspec.junit.Notes;
-import com.googlecode.yatspec.junit.SpecResultListener;
-import com.googlecode.yatspec.junit.SpecRunner;
-import com.googlecode.yatspec.junit.WithCustomResultListeners;
+import com.googlecode.yatspec.junit.*;
 import com.googlecode.yatspec.plugin.sequencediagram.ByNamingConventionMessageProducer;
 import com.googlecode.yatspec.plugin.sequencediagram.SequenceDiagramGenerator;
 import com.googlecode.yatspec.plugin.sequencediagram.SequenceDiagramMessage;
@@ -67,8 +64,9 @@ public class WeatherApplicationTest extends TestState implements WithCustomResul
     }
 
     @Test
-    public void reportsErrorWhenDarkSkyReturnsANonSuccessfulResponse() throws IOException {
-        givenDarkSkyReturnsAnError(SC_INTERNAL_SERVER_ERROR);
+    @Table({@Row("500"), @Row("503")})
+    public void reportsErrorWhenDarkSkyReturnsANonSuccessfulResponse(String darkSkyResponseCode) throws IOException {
+        givenDarkSkyReturnsAnError(darkSkyResponseCode);
         whenIRequestForecast();
         thenTheResponseContains("Error while fetching data from DarkSky APIs");
     }
@@ -83,10 +81,10 @@ public class WeatherApplicationTest extends TestState implements WithCustomResul
         assertEquals(error, IOUtils.toString(httpResponse.getEntity().getContent()));
     }
 
-    private void givenDarkSkyReturnsAnError(int status) {
+    private void givenDarkSkyReturnsAnError(String status) {
         interestingGivens.add("DarkSky response status code", status);
         darkSkyAPIStub.stubFor(get(urlEqualTo("/forecast/e67b0e3784104669340c3cb089412b67/51.507253,-0.127755"))
-                .willReturn(aResponse().withStatus(status)));
+                .willReturn(aResponse().withStatus(Integer.parseInt(status))));
     }
 
     private void whenIRequestForecast() throws IOException {
