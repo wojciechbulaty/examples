@@ -23,7 +23,7 @@ public class LogWiremockInYatspecRequest implements RequestListener {
         testState.log("Response from " + targetSystem + " to " + sourceSystem, toString(response));
     }
 
-    private Object toString(com.github.tomakehurst.wiremock.http.Response response) {
+    private String toString(com.github.tomakehurst.wiremock.http.Response response) {
         StringBuilder result = new StringBuilder();
         result.append("HTTP").append(" ").append(response.getStatus()).append("\n");
         if (response.getHeaders() != null) {

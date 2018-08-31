@@ -7,6 +7,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.client.fluent.Response;
+import org.apache.http.util.EntityUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -14,6 +15,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static java.lang.String.format;
@@ -22,16 +24,19 @@ import static junit.framework.TestCase.assertEquals;
 
 @RunWith(SpecRunner.class)
 public class WeatherApplicationTest extends TestState {
+    private static final String WEATHER_APPLICATION = "WeatherApplication";
+
     @Rule
     public WireMockRule darkSkyAPIStub = new WireMockRule();
 
     private WeatherApplication weatherApplication = new WeatherApplication();
-    private Response response;
+    private HttpResponse httpResponse;
+    private String responseBody;
 
     @Before
     public void setUp() {
         weatherApplication.start();
-        darkSkyAPIStub.addMockServiceRequestListener(new LogWiremockInYatspecRequest(this, "WeatherApplication", "DarkSky"));
+        darkSkyAPIStub.addMockServiceRequestListener(new LogWiremockInYatspecRequest(this, WEATHER_APPLICATION, "DarkSky"));
     }
 
     @After
@@ -54,7 +59,6 @@ public class WeatherApplicationTest extends TestState {
     }
 
     private void thenTheResponseContains(String error) throws IOException {
-        HttpResponse httpResponse = response.returnResponse();
         assertEquals(503, httpResponse.getStatusLine().getStatusCode());
         assertEquals(error, IOUtils.toString(httpResponse.getEntity().getContent()));
     }
@@ -66,12 +70,26 @@ public class WeatherApplicationTest extends TestState {
     }
 
     private void whenIRequestForecast() throws IOException {
-        response = Request.Get("http://localhost:" + weatherApplication.port() + "/wind-speed")
-                .execute();
+        Request get = Request.Get("http://localhost:" + weatherApplication.port() + "/wind-speed");
+        log("Request from client to " + WEATHER_APPLICATION, get);
+        Response response = get.execute();
+        httpResponse = response.returnResponse();
+        responseBody = EntityUtils.toString(httpResponse.getEntity());
+        log("Response from " + WEATHER_APPLICATION + " to client", toString(httpResponse, responseBody));
+    }
+
+    private String toString(HttpResponse response, String responseBody) throws IOException {
+        StringBuilder result = new StringBuilder();
+        result.append("HTTP").append(" ").append(response.getStatusLine().getStatusCode()).append("\n");
+        if (response.getAllHeaders() != null) {
+            Arrays.stream(response.getAllHeaders()).forEach(h -> result.append(h.getName()).append(": ").append(h.getValue()).append("\n"));
+        }
+        result.append("\n").append("\n").append(responseBody);
+        return result.toString();
     }
 
     private void thenTheWindSpeedIs(String expected) throws IOException {
-        assertEquals(expected, response.returnContent().toString());
+        assertEquals(expected, responseBody);
     }
 
     private void givenDarkSkyForecastForLondonContainsWindSpeed(String windSpeed) throws IOException {
