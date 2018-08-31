@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableSet;
 import com.googlecode.yatspec.junit.*;
 import com.googlecode.yatspec.plugin.sequencediagram.ByNamingConventionMessageProducer;
 import com.googlecode.yatspec.plugin.sequencediagram.SequenceDiagramGenerator;
-import com.googlecode.yatspec.plugin.sequencediagram.SequenceDiagramMessage;
 import com.googlecode.yatspec.plugin.sequencediagram.SvgWrapper;
 import com.googlecode.yatspec.rendering.html.DontHighlightRenderer;
 import com.googlecode.yatspec.rendering.html.HtmlResultRenderer;
@@ -23,12 +22,10 @@ import org.junit.runner.RunWith;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collections;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static com.googlecode.yatspec.plugin.sequencediagram.SequenceDiagramGenerator.*;
+import static com.googlecode.yatspec.plugin.sequencediagram.SequenceDiagramGenerator.getHeaderContentForModalWindows;
 import static java.lang.String.format;
-import static javax.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
 import static junit.framework.TestCase.assertEquals;
 
 @RunWith(SpecRunner.class)
