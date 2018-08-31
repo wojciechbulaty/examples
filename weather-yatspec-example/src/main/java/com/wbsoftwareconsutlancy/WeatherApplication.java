@@ -27,7 +27,6 @@ public class WeatherApplication {
         HandlerList handlers = new HandlerList();
         handlers.setHandlers(new Handler[]{
                 new WindHandler(loadProperties()),
-                getResourceHandler("html"),
                 new DefaultHandler()});
         server.setHandler(handlers);
         try {
@@ -40,14 +39,6 @@ public class WeatherApplication {
 
     private static void info(String msg) {
         System.out.println(new Date() + ": " + msg);
-    }
-
-    private static ResourceHandler getResourceHandler(String resourceBase) {
-        ResourceHandler resourceHandler = new ResourceHandler();
-        resourceHandler.setDirectoriesListed(true);
-        resourceHandler.setWelcomeFiles(new String[]{"index.html"});
-        resourceHandler.setResourceBase(Resource.newClassPathResource(resourceBase).getName());
-        return resourceHandler;
     }
 
     public void join() throws InterruptedException {

@@ -58,6 +58,12 @@
             <version>2.4</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.googlecode.yatspec</groupId>
+            <artifactId>yatspec</artifactId>
+            <version>1.27</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>

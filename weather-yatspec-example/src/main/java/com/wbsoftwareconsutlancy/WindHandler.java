@@ -48,7 +48,7 @@ class WindHandler extends AbstractHandler {
             } catch (Exception e) {
                 LOG.error("Unknown problem while retrieving wind speed", e);
                 response.setStatus(SC_SERVICE_UNAVAILABLE);
-                response.getWriter().print("ERROR");
+                response.getWriter().print("Error while fetching data from DarkSky APIs");
             }
             baseRequest.setHandled(true);
         }
