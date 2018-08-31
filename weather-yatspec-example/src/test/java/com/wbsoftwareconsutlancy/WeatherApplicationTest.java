@@ -2,6 +2,7 @@ package com.wbsoftwareconsutlancy;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.google.common.collect.ImmutableSet;
+import com.googlecode.yatspec.junit.Notes;
 import com.googlecode.yatspec.junit.SpecResultListener;
 import com.googlecode.yatspec.junit.SpecRunner;
 import com.googlecode.yatspec.junit.WithCustomResultListeners;
@@ -58,17 +59,11 @@ public class WeatherApplicationTest extends TestState implements WithCustomResul
     }
 
     @Test
+    @Notes("The DarkSky response is quite big and complex, out weather application extracts one attribute from it")
     public void servesWindSpeedBasedOnDarkSkyResponse() throws IOException {
         givenDarkSkyForecastForLondonContainsWindSpeed("12.34");
         whenIRequestForecast();
         thenTheWindSpeedIs("12.34mph");
-    }
-
-
-
-    private void addSequenceDiagram() {
-        super.log("Sequence diagram", new SequenceDiagramGenerator()
-                .generateSequenceDiagram(new ByNamingConventionMessageProducer().messages(capturedInputAndOutputs)));
     }
 
     @Test
@@ -76,6 +71,11 @@ public class WeatherApplicationTest extends TestState implements WithCustomResul
         givenDarkSkyReturnsAnError(SC_INTERNAL_SERVER_ERROR);
         whenIRequestForecast();
         thenTheResponseContains("Error while fetching data from DarkSky APIs");
+    }
+
+    private void addSequenceDiagram() {
+        super.log("Sequence diagram", new SequenceDiagramGenerator()
+                .generateSequenceDiagram(new ByNamingConventionMessageProducer().messages(capturedInputAndOutputs)));
     }
 
     private void thenTheResponseContains(String error) throws IOException {
