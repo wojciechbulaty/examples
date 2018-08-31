@@ -2,6 +2,7 @@ package com.wbsoftwareconsutlancy;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.googlecode.yatspec.junit.SpecRunner;
+import com.googlecode.yatspec.state.givenwhenthen.TestState;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.fluent.Request;
@@ -15,11 +16,12 @@ import org.junit.runner.RunWith;
 import java.io.IOException;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static java.lang.String.format;
 import static javax.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
 import static junit.framework.TestCase.assertEquals;
 
 @RunWith(SpecRunner.class)
-public class WeatherApplicationTest {
+public class WeatherApplicationTest extends TestState {
     @Rule
     public WireMockRule darkSkyAPIStub = new WireMockRule();
 
@@ -29,6 +31,7 @@ public class WeatherApplicationTest {
     @Before
     public void setUp() {
         weatherApplication.start();
+        darkSkyAPIStub.addMockServiceRequestListener(new LogWiremockInYatspecRequest(this, "WeatherApplication", "DarkSky"));
     }
 
     @After
@@ -57,6 +60,7 @@ public class WeatherApplicationTest {
     }
 
     private void givenDarkSkyReturnsAnError(int status) {
+        interestingGivens.add("DarkSky response status code", status);
         darkSkyAPIStub.stubFor(get(urlEqualTo("/forecast/e67b0e3784104669340c3cb089412b67/51.507253,-0.127755"))
                 .willReturn(aResponse().withStatus(status)));
     }
@@ -71,11 +75,13 @@ public class WeatherApplicationTest {
     }
 
     private void givenDarkSkyForecastForLondonContainsWindSpeed(String windSpeed) throws IOException {
+        interestingGivens.add("Wind speed", windSpeed);
         darkSkyAPIStub.stubFor(get(urlEqualTo("/forecast/e67b0e3784104669340c3cb089412b67/51.507253,-0.127755"))
                 .willReturn(aResponse().withBody(darkSkyResponseBody(windSpeed))));
     }
 
     private String darkSkyResponseBody(String windSpeed) throws IOException {
-        return String.format(IOUtils.toString(getClass().getClassLoader().getResourceAsStream("darksky-response-body.json")), windSpeed);
+        return format(IOUtils.toString(getClass().getClassLoader().getResourceAsStream("darksky-response-body.json")), windSpeed);
     }
+
 }
