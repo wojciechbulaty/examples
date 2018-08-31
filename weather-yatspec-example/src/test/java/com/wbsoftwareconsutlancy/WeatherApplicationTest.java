@@ -26,10 +26,11 @@ import static junit.framework.TestCase.assertEquals;
 public class WeatherApplicationTest extends TestState {
     private static final String WEATHER_APPLICATION = "WeatherApplication";
 
+    private final WeatherApplication weatherApplication = new WeatherApplication();
+
     @Rule
     public WireMockRule darkSkyAPIStub = new WireMockRule();
 
-    private WeatherApplication weatherApplication = new WeatherApplication();
     private HttpResponse httpResponse;
     private String responseBody;
 
