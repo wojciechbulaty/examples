@@ -58,7 +58,7 @@ public class FinanceApplication {
     }
 
     private static InputStream getPropertiesInputStream() throws FileNotFoundException {
-        String fileLocation = System.getProperty("finance.application.properties");
+        String fileLocation = System.getProperty("finance.application.properties", System.getenv("finance.application.properties"));
         if (fileLocation != null) {
             return new FileInputStream(new File(fileLocation));
         } else {
