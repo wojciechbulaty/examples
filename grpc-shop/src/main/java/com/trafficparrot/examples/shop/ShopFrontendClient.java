@@ -5,6 +5,7 @@ import com.trafficparrot.examples.shop.proto.OrderGrpc;
 import com.trafficparrot.examples.shop.proto.OrderStatus;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import io.grpc.StatusRuntimeException;
 
 import javax.swing.*;
 import java.awt.*;
@@ -34,8 +35,13 @@ public class ShopFrontendClient {
 
     public void order(int sku, int quantity, ShopApplicationLogger shopApplicationLogger) {
         Item item = Item.newBuilder().setSku(sku).setQuantity(quantity).build();
-        OrderStatus orderStatus = blockingStub.purchase(item);
-        shopApplicationLogger.info("Received " + orderStatus);
+        try {
+            OrderStatus orderStatus = blockingStub.purchase(item);
+            shopApplicationLogger.info("Received " + orderStatus);
+        } catch (StatusRuntimeException e) {
+            shopApplicationLogger.info("Received an error: " + e.getMessage() + "\n" + e.getStatus()  + "\n" + e.getTrailers());
+            throw new IllegalArgumentException(e);
+        }
     }
 
     public static void main(String[] args) throws InterruptedException, IOException {

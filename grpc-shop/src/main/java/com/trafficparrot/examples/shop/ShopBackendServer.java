@@ -4,8 +4,11 @@ import com.trafficparrot.examples.shop.proto.Item;
 import com.trafficparrot.examples.shop.proto.OrderGrpc;
 import com.trafficparrot.examples.shop.proto.OrderStatus;
 import com.trafficparrot.examples.shop.proto.Status;
+import io.grpc.Metadata;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
+import io.grpc.StatusRuntimeException;
+import io.grpc.internal.GrpcUtil;
 import io.grpc.stub.StreamObserver;
 
 import javax.swing.*;
@@ -108,6 +111,13 @@ public class ShopBackendServer {
         @Override
         public void purchase(Item request, StreamObserver<OrderStatus> responseObserver) {
             logger.info("Request to purchase received for: \n" + request);
+            if (request.getQuantity() == 999) {
+                Metadata metadata = new Metadata();
+                metadata.put(Metadata.Key.of("reason-why", Metadata.ASCII_STRING_MARSHALLER), "If you send quantity 999 then this service will always blow up");
+                metadata.put(Metadata.Key.of("so-what", Metadata.ASCII_STRING_MARSHALLER), "This is to allow for testing of recording exceptions");
+                StatusRuntimeException statusRuntimeException = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT, metadata);
+                responseObserver.onError(statusRuntimeException);
+            }
             responseObserver.onNext(OrderStatus.newBuilder().setStatus(Status.SUCCESS).setMessage("Order processed: " + request).build());
             responseObserver.onCompleted();
         }

@@ -6,13 +6,11 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="grpc-shop" />
+        <module name="grpcshop" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="grpc-shop" target="1.8" />
-      <module name="shop-backend" target="1.8" />
-      <module name="shop-frontend" target="1.8" />
+      <module name="grpcshop" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>
