@@ -1,6 +1,7 @@
 package com.wbsoftwareconsutlancy;
 
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
@@ -29,11 +30,8 @@ class StockQuoteLastPriceHandler extends AbstractHandler {
         this.properties = properties;
     }
 
-    public void handle(String target,
-                       Request baseRequest,
-                       HttpServletRequest request,
-                       HttpServletResponse response) throws IOException,
-            ServletException {
+    @Override
+    public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         if ("/stock-quote-last-price".equals(target)) {
             try {
                 double lastPrice = parseStockQuoteLastPrice(markitStockQuoteFor(APPLE_SYMBOL));
@@ -62,10 +60,9 @@ class StockQuoteLastPriceHandler extends AbstractHandler {
             ResponseHandler<String> responseHandler = response -> {
                 int status = response.getStatusLine().getStatusCode();
                 if (status >= 200 && status < 300) {
-                    HttpEntity entity = response.getEntity();
-                    return entity != null ? EntityUtils.toString(entity) : null;
+                    return responseString(response);
                 } else {
-                    throw new ClientProtocolException("Unexpected response status: " + status);
+                    throw new ClientProtocolException("Unexpected response status: " + status + " with response body: " + responseString(response));
                 }
             };
             String responseBody = httpclient.execute(httpget, responseHandler);
@@ -73,6 +70,14 @@ class StockQuoteLastPriceHandler extends AbstractHandler {
             System.out.println(responseBody);
             return responseBody;
         }
+    }
+
+    private String responseString(HttpResponse response) throws IOException {
+        HttpEntity entity = response.getEntity();
+        if (entity == null) {
+            return null;
+        }
+        return EntityUtils.toString(entity);
     }
 
     private String getMarkitUrl() {

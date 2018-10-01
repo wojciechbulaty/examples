@@ -27,6 +27,7 @@ public class FinanceApplication {
         HandlerList handlers = new HandlerList();
         handlers.setHandlers(new Handler[]{
                 new StockQuoteLastPriceHandler(loadProperties()),
+                new ReadyHandler(),
                 getResourceHandler("html"),
                 new DefaultHandler()});
         server.setHandler(handlers);
@@ -58,7 +59,7 @@ public class FinanceApplication {
     }
 
     private static InputStream getPropertiesInputStream() throws FileNotFoundException {
-        String fileLocation = System.getProperty("finance.application.properties");
+        String fileLocation = System.getProperty("finance.application.properties", System.getenv("finance.application.properties"));
         if (fileLocation != null) {
             return new FileInputStream(new File(fileLocation));
         } else {
