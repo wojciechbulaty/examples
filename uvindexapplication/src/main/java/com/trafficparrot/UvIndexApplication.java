@@ -57,7 +57,8 @@ public class UvIndexApplication {
                 int portNum = Integer.parseInt(port.getText());
                 String zipCode = zip.getText();
                 try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
-                    HttpPost httpPost = new HttpPost(hostname + ":" + portNum + "/uvindexalert/services/UVIndexAlertPort");
+                    String apiUrl = hostname + ":" + portNum + "/uvindexalert/services/UVIndexAlertPort";
+                    HttpPost httpPost = new HttpPost(apiUrl);
                     httpPost.addHeader("accept-encoding", "identity");
                     httpPost.addHeader("Accept", "text/xml");
                     StringEntity stringRequestEntity = new StringEntity(format("<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:urn=\"urn:uvindexalert\">\n" +
@@ -89,7 +90,7 @@ public class UvIndexApplication {
                     String alert = (String) xpath.compile("//*[local-name() = 'alert']").evaluate(doc, XPathConstants.STRING);
                     String index = (String) xpath.compile("//*[local-name() = 'index']").evaluate(doc, XPathConstants.STRING);
                     String forecastDate = (String) xpath.compile("//*[local-name() = 'forecastDate']").evaluate(doc, XPathConstants.STRING);
-                    output.append(format("Got UV Index data, alert is '%s' index is '%s' forecastDate is '%s'%s", alert, index, forecastDate, NEW_LINE));
+                    output.append(format("Fetched UV Index from %s.%sThe response alert is '%s'. The UV Index is '%s'.%s%s", apiUrl, NEW_LINE, alert, index, NEW_LINE, NEW_LINE));
                 }
             } catch (Exception e) {
                 e.printStackTrace();

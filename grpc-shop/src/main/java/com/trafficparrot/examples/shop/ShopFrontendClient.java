@@ -28,7 +28,7 @@ public class ShopFrontendClient {
         channel = channelBuilder.build();
         blockingStub = OrderGrpc.newBlockingStub(channel);
     }
-
+5
     public void shutdown() throws InterruptedException {
         channel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
     }
@@ -43,7 +43,7 @@ public class ShopFrontendClient {
             throw new IllegalArgumentException(e);
         }
     }
-
+    JsonFilesystemMappingsRepository
     public static void main(String[] args) throws InterruptedException, IOException {
         runUi();
     }
