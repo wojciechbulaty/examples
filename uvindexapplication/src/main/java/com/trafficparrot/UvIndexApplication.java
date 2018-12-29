@@ -11,6 +11,10 @@ import org.apache.http.util.EntityUtils;
 import org.w3c.dom.Document;
 
 import javax.swing.*;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
@@ -21,11 +25,16 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 import static java.awt.BorderLayout.*;
+import static java.awt.Color.BLACK;
+import static java.lang.Integer.*;
 import static java.lang.String.format;
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
 public class UvIndexApplication {
     private static final String NEW_LINE = System.getProperty("line.separator");
+    private static final Color YELLOW = new Color(167, 167, 0);
+    private static final Color RED = new Color(191, 0, 0);
+    private static final Color GREEN = new Color(0, 123, 0);
 
     public static void main(String[] args) {
         JFrame frame = new JFrame("UV Index Application");
@@ -42,7 +51,9 @@ public class UvIndexApplication {
         container.add(serverDetails, PAGE_START);
 
         JPanel outputPanel = new JPanel();
-        JTextArea output = new JTextArea("", 30, 60);
+        JTextPane output = new JTextPane();
+        output.setPreferredSize(new Dimension(500, 400));
+        output.setBackground(new Color(225, 225, 225));
         outputPanel.add(output);
         container.add(outputPanel, PAGE_END);
 
@@ -54,7 +65,7 @@ public class UvIndexApplication {
         order.addActionListener(event -> {
             try {
                 String hostname = host.getText();
-                int portNum = Integer.parseInt(port.getText());
+                int portNum = parseInt(port.getText());
                 String zipCode = zip.getText();
                 try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
                     String apiUrl = hostname + ":" + portNum + "/uvindexalert/services/UVIndexAlertPort";
@@ -90,11 +101,35 @@ public class UvIndexApplication {
                     String alert = (String) xpath.compile("//*[local-name() = 'alert']").evaluate(doc, XPathConstants.STRING);
                     String index = (String) xpath.compile("//*[local-name() = 'index']").evaluate(doc, XPathConstants.STRING);
                     String forecastDate = (String) xpath.compile("//*[local-name() = 'forecastDate']").evaluate(doc, XPathConstants.STRING);
-                    output.append(format("Fetched UV Index from %s.%sThe response alert is '%s'. The UV Index is '%s'.%s%s", apiUrl, NEW_LINE, alert, index, NEW_LINE, NEW_LINE));
+                    Color color;
+                    switch (parseInt(index)) {
+                        case 0:
+                        case 1:
+                        case 2:
+                        case 3:
+                        case 4:
+                        case 5:
+                            color = GREEN;
+                            break;
+                        case 6:
+                        case 7:
+                        case 8:
+                            color = YELLOW;
+                            break;
+                        case 9:
+                        case 10:
+                            color = RED;
+                            break;
+                        default:
+                            color = BLACK;
+                    }
+                    addColoredText(output,
+                            format("Fetched UV Index from %s.%sThe response alert is '%s'. The UV Index is '%s'.%s%s", apiUrl, NEW_LINE, alert, index, NEW_LINE, NEW_LINE),
+                            color);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                output.append("ERROR! " + e.getMessage() + NEW_LINE);
+                addColoredText(output, "ERROR! " + e.getMessage() + NEW_LINE + NEW_LINE, BLACK);
             }
         });
         orderDetails.add(order);
@@ -102,6 +137,17 @@ public class UvIndexApplication {
 
         frame.pack();
         frame.setVisible(true);
+    }
+
+    private static void addColoredText(JTextPane pane, String text, Color color) {
+        StyledDocument doc = pane.getStyledDocument();
+        Style style = pane.addStyle("Color Style", null);
+        StyleConstants.setForeground(style, color);
+        try {
+            doc.insertString(doc.getLength(), text, style);
+        } catch (BadLocationException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 
     private static String toString(HttpEntity entity) throws IOException {
