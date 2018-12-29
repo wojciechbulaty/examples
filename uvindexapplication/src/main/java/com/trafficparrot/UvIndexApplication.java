@@ -23,9 +23,11 @@ import javax.xml.xpath.XPathFactory;
 import java.awt.*;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.concurrent.ConcurrentNavigableMap;
 
 import static java.awt.BorderLayout.*;
 import static java.awt.Color.BLACK;
+import static java.awt.Component.*;
 import static java.lang.Integer.*;
 import static java.lang.String.format;
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
@@ -51,10 +53,16 @@ public class UvIndexApplication {
         container.add(serverDetails, PAGE_START);
 
         JPanel outputPanel = new JPanel();
+        outputPanel.setLayout(new BoxLayout(outputPanel, BoxLayout.Y_AXIS));
         JTextPane output = new JTextPane();
+        output.setAlignmentX(CENTER_ALIGNMENT);
         output.setPreferredSize(new Dimension(500, 400));
         output.setBackground(new Color(225, 225, 225));
-        outputPanel.add(output);
+        outputPanel.add(output, PAGE_START);
+        JButton clear = new JButton("Clear all messages");
+        clear.setAlignmentX(CENTER_ALIGNMENT);
+        clear.addActionListener(e -> output.setText(""));
+        outputPanel.add(clear, PAGE_END);
         container.add(outputPanel, PAGE_END);
 
         JPanel orderDetails = new JPanel();
