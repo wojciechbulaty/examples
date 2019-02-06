@@ -28,7 +28,7 @@ public class ShopFrontendClient {
         channel = channelBuilder.build();
         blockingStub = OrderGrpc.newBlockingStub(channel);
     }
-5
+
     public void shutdown() throws InterruptedException {
         channel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
     }
@@ -43,8 +43,8 @@ public class ShopFrontendClient {
             throw new IllegalArgumentException(e);
         }
     }
-    JsonFilesystemMappingsRepository
-    public static void main(String[] args) throws InterruptedException, IOException {
+
+    public static void main(String[] args) {
         runUi();
     }
 
@@ -62,9 +62,9 @@ public class ShopFrontendClient {
         serverDetails.add(port);
         container.add(serverDetails, PAGE_START);
 
-        JPanel outputPanel = new JPanel();
         JTextArea output = new JTextArea("", 20, 40);
-        outputPanel.add(output);
+        JScrollPane outputPanel = new JScrollPane(output, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        output.setAutoscrolls(true);
         container.add(outputPanel, PAGE_END);
 
         JPanel orderDetails = new JPanel();

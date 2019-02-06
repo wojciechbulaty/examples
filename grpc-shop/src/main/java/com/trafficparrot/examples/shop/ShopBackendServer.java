@@ -58,9 +58,8 @@ public class ShopBackendServer {
         serverDetails.add(port);
         container.add(serverDetails, PAGE_START);
 
-        JPanel outputPanel = new JPanel();
         JTextArea output = new JTextArea("", 20, 40);
-        outputPanel.add(output);
+        JScrollPane outputPanel = new JScrollPane(output, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         container.add(outputPanel, PAGE_END);
 
         JPanel startStop = new JPanel();
@@ -117,9 +116,10 @@ public class ShopBackendServer {
                 metadata.put(Metadata.Key.of("so-what", Metadata.ASCII_STRING_MARSHALLER), "This is to allow for testing of recording exceptions");
                 StatusRuntimeException statusRuntimeException = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT, metadata);
                 responseObserver.onError(statusRuntimeException);
+            } else {
+                responseObserver.onNext(OrderStatus.newBuilder().setStatus(Status.SUCCESS).setMessage("Order processed: " + request).build());
+                responseObserver.onCompleted();
             }
-            responseObserver.onNext(OrderStatus.newBuilder().setStatus(Status.SUCCESS).setMessage("Order processed: " + request).build());
-            responseObserver.onCompleted();
         }
 
         interface OrderLogger {
