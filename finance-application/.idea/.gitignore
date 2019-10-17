@@ -1,0 +1,7 @@
+# IDE configuration that does not need to be shared
+/workspace.xml
+/uiDesigner.xml
+/dictionaries
+/libraries
+/shelf
+/$*
