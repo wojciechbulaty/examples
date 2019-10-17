@@ -14,7 +14,7 @@ import static junit.framework.TestCase.assertEquals;
 
 public class FinanceApplicationTest {
     @Rule
-    public WireMockRule forecastIoService = new WireMockRule();
+    public WireMockRule forecastIoService = new WireMockRule(8023);
 
     private FinanceApplication financeApplication = new FinanceApplication();
 
