@@ -96,8 +96,8 @@ public class UvIndexApplication {
                             System.out.println("Response: '" + entityString + "'");
                             return entityString;
                         } else {
-                            System.err.println("Response: '" + entityString + "'");
-                            return "ERROR! Unexpected response status: " + status;
+                            System.err.println("ERROR! Unexpected response status: " + status);
+                            throw new IllegalArgumentException("Problem connecting to the weather API at " +  hostname + ". Unexpected response status: " + status + ".\nError response: " + entityString);
                         }
                     };
                     String response = httpclient.execute(httpPost, responseHandler);
