@@ -1,1 +1,1 @@
-java -classpath *.jar -Dfinance.application.properties=./finance-application.properties com.wbsoftwareconsutlancy.FinanceApplication
+START java -classpath * com.wbsoftwareconsutlancy.FinanceApplication -Dfinance.application.properties=./finance-application.properties
