@@ -6,7 +6,7 @@
 
     <groupId>com.trafficparrot</groupId>
     <artifactId>uv-index-application</artifactId>
-    <version>1.2</version>
+    <version>1.2.1</version>
 
     <dependencies>
         <dependency>
