@@ -45,10 +45,10 @@ public class UvIndexApplication {
 
         JPanel serverDetails = new JPanel();
         serverDetails.add(new JLabel("Server host"));
-        JTextField host = new JTextField("https://us-central1-traffic-parrot-production.cloudfunctions.net", 20);
+        JTextField host = new JTextField("http://us-central1-traffic-parrot-production.cloudfunctions.net", 20);
         serverDetails.add(host);
         serverDetails.add(new JLabel("Server port"));
-        JTextField port = new JTextField("443", 6);
+        JTextField port = new JTextField("80", 6);
         serverDetails.add(port);
         container.add(serverDetails, PAGE_START);
 
